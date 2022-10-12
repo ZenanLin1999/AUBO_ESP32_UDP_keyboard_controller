@@ -210,13 +210,81 @@ void TENG_experiment::target_movement(int cmd, double step)
         TENG_experiment::relativeMoveOnBase.relativeOri.z=0;
         TENG_experiment::robotService.robotServiceSetMoveRelativeParam(TENG_experiment::relativeMoveOnBase);
     }
-    else if(cmd == 5) // qiao +45 degree
+    else if(cmd == 5) // qiao + degree
     {
-        exit(1);
-    }
+//        exit(1);
+        aubo_robot_namespace::Rpy relativeRpy;
+        relativeRpy.rx=0;
+        relativeRpy.ry=step * 1.0/180.0*M_PI;
+        relativeRpy.rz=0;
+        aubo_robot_namespace::Ori relativeOri;
+        robotService.RPYToQuaternion(relativeRpy,relativeOri);  //Euler angle to quaternion to find the four-element representation of the offset
+
+        //Define a tool
+        aubo_robot_namespace::ToolInEndDesc toolInEndDesc;
+        toolInEndDesc.toolInEndPosition.x=0;
+        toolInEndDesc.toolInEndPosition.y=0;
+        toolInEndDesc.toolInEndPosition.z=0.1;
+        toolInEndDesc.toolInEndOrientation.w=1;
+        toolInEndDesc.toolInEndOrientation.x=0;
+        toolInEndDesc.toolInEndOrientation.y=0;
+        toolInEndDesc.toolInEndOrientation.z=0;
+
+        //Linear motion
+        TENG_experiment::relativeMoveOnBase.ena = true;
+        TENG_experiment::relativeMoveOnBase.relativePosition[0] = 0;
+        TENG_experiment::relativeMoveOnBase.relativePosition[1] = 0;
+        TENG_experiment::relativeMoveOnBase.relativePosition[2] = 0;   //Units m
+        TENG_experiment::relativeMoveOnBase.relativeOri = relativeOri;
+//        TENG_experiment::relativeMoveOnBase.relativeOri.w=relativeOri.w;
+//        TENG_experiment::relativeMoveOnBase.relativeOri.x=relativeOri.x;
+//        TENG_experiment::relativeMoveOnBase.relativeOri.y=relativeOri.y;
+//        TENG_experiment::relativeMoveOnBase.relativeOri.z=relativeOri.z;
+        aubo_robot_namespace::CoordCalibrateByJointAngleAndTool userCoord;
+        userCoord.coordType=aubo_robot_namespace::EndCoordinate;
+        userCoord.toolDesc=toolInEndDesc;
+
+        TENG_experiment::robotService.robotServiceSetMoveRelativeParam(TENG_experiment::relativeMoveOnBase, userCoord);
+//        TENG_experiment::robotService.robotServiceRobotIk(startPointJointAngle, targetPosition, targetOri, wayPoint);
+        }
     else if(cmd == 6) // qiao -45 degree
     {
-        exit(1);
+//        exit(1);
+        aubo_robot_namespace::Rpy relativeRpy;
+        relativeRpy.rx=0;
+        relativeRpy.ry=step * -1.0/180.0*M_PI;
+        relativeRpy.rz=0;
+        aubo_robot_namespace::Ori relativeOri;
+        robotService.RPYToQuaternion(relativeRpy,relativeOri);  //Euler angle to quaternion to find the four-element representation of the offset
+
+        //Define a tool
+        aubo_robot_namespace::ToolInEndDesc toolInEndDesc;
+        toolInEndDesc.toolInEndPosition.x=0;
+        toolInEndDesc.toolInEndPosition.y=0;
+        toolInEndDesc.toolInEndPosition.z=0.1;
+        toolInEndDesc.toolInEndOrientation.w=1;
+        toolInEndDesc.toolInEndOrientation.x=0;
+        toolInEndDesc.toolInEndOrientation.y=0;
+        toolInEndDesc.toolInEndOrientation.z=0;
+
+        //Linear motion
+        TENG_experiment::relativeMoveOnBase.ena = true;
+        TENG_experiment::relativeMoveOnBase.relativePosition[0] = 0;
+        TENG_experiment::relativeMoveOnBase.relativePosition[1] = 0;
+        TENG_experiment::relativeMoveOnBase.relativePosition[2] = 0;   //Units m
+        TENG_experiment::relativeMoveOnBase.relativeOri = relativeOri;
+//        TENG_experiment::relativeMoveOnBase.relativeOri.w=relativeOri.w;
+//        TENG_experiment::relativeMoveOnBase.relativeOri.x=relativeOri.x;
+//        TENG_experiment::relativeMoveOnBase.relativeOri.y=relativeOri.y;
+//        TENG_experiment::relativeMoveOnBase.relativeOri.z=relativeOri.z;
+
+        aubo_robot_namespace::CoordCalibrateByJointAngleAndTool userCoord;
+        userCoord.coordType=aubo_robot_namespace::EndCoordinate;
+        userCoord.toolDesc=toolInEndDesc;
+
+        TENG_experiment::robotService.robotServiceSetMoveRelativeParam(TENG_experiment::relativeMoveOnBase, userCoord);
+//        TENG_experiment::robotService.robotServiceRobotIk(startPointJointAngle, targetPosition, targetOri, wayPoint);
+
     }
 
     aubo_robot_namespace::wayPoint_S centerOfMindWayPoint;
